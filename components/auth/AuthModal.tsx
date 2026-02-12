@@ -15,38 +15,56 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const { login } = useAuth();
+    const [isLoading, setIsLoading] = useState(false);
+    const { login, signup } = useAuth();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+        setIsLoading(true);
 
         if (!email || !password || (!isLogin && !name)) {
             setError("Please fill in all fields");
+            setIsLoading(false);
             return;
         }
 
         if (password.length < 6) {
             setError("Password must be at least 6 characters");
+            setIsLoading(false);
             return;
         }
 
-        // Simulate API call/validation
+        const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
+        const payload = isLogin ? { email, password } : { name, email, password };
+
         try {
-            if (isLogin) {
-                // Login logic
-                login(email);
-            } else {
-                // Signup logic
-                login(email, name);
+            const response = await fetch(`http://localhost:5000${endpoint}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Authentication failed");
             }
+
+            if (isLogin) {
+                login(data.token, data.user);
+            } else {
+                signup(data.token, data.user);
+            }
+
             onClose();
-            // Reset form
             setEmail("");
             setName("");
             setPassword("");
-        } catch (err) {
-            setError("An error occurred. Please try again.");
+        } catch (err: any) {
+            setError(err.message || "An error occurred. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -110,9 +128,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
                 <button
                     type="submit"
+                    disabled={isLoading}
                     className="inline-flex h-10 w-full items-center justify-center rounded-md bg-zinc-900 px-8 text-sm font-medium text-zinc-50 shadow transition-colors hover:bg-zinc-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-50/90 dark:focus-visible:ring-zinc-300"
                 >
-                    {isLogin ? "Sign In" : "Create Account"}
+                    {isLoading ? "Please wait..." : (isLogin ? "Sign In" : "Create Account")}
                 </button>
 
                 <div className="text-center text-sm">

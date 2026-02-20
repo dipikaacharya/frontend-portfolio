@@ -6,6 +6,7 @@ interface User {
     id: number;
     email: string;
     name: string;
+    is_admin?: boolean;
 }
 
 interface AuthContextType {
@@ -15,16 +16,18 @@ interface AuthContextType {
     signup: (token: string, user: User) => void;
     logout: () => void;
     isAuthenticated: boolean;
+    isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         // Check local storage on mount
@@ -41,6 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 localStorage.clear();
             }
         }
+        setIsLoading(false);
     }, []);
 
     const login = (token: string, user: User) => {
@@ -63,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, login, signup, logout, isAuthenticated }}>
+        <AuthContext.Provider value={{ user, token, login, signup, logout, isAuthenticated, isLoading }}>
             {children}
         </AuthContext.Provider>
     );

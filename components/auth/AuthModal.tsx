@@ -51,6 +51,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 throw new Error(data.error || "Authentication failed");
             }
 
+            if (data.user.is_admin) {
+                throw new Error("Admins must use the Admin Portal.");
+            }
+
             if (isLogin) {
                 login(data.token, data.user);
             } else {

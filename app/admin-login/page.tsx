@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
 import { Header } from "@/components/layout/Header";
+import { API_BASE_URL } from "@/utils/apiConfig";
 
 export default function AdminLogin() {
     const [email, setEmail] = useState("");
@@ -25,7 +26,7 @@ export default function AdminLogin() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
+            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),

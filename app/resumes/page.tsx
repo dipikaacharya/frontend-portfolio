@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Header } from "@/components/layout/Header";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useAuth } from "@/app/context/AuthContext";
+import { API_BASE_URL } from "@/utils/apiConfig";
 
 const DownloadIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
@@ -17,7 +18,7 @@ export default function Resumes() {
     useEffect(() => {
         const fetchResumes = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/resumes`);
+                const res = await fetch(`${API_BASE_URL}/api/resumes`);
                 const data = await res.json();
                 setResumes(data);
             } catch (error) {
@@ -31,7 +32,7 @@ export default function Resumes() {
 
     const handleDownload = async (resumeName: string) => {
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/downloads/log`, {
+            await fetch(`${API_BASE_URL}/api/downloads/log`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

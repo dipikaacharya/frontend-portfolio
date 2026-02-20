@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Header } from "@/components/layout/Header";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useAuth } from "@/app/context/AuthContext";
+import { API_BASE_URL } from "@/utils/apiConfig";
 
 const ExternalLinkIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
@@ -21,7 +22,7 @@ export default function Certificates() {
     useEffect(() => {
         const fetchCerts = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/certificates`);
+                const res = await fetch(`${API_BASE_URL}/api/certificates`);
                 const data = await res.json();
                 setCertifications(data);
             } catch (error) {
@@ -35,7 +36,7 @@ export default function Certificates() {
 
     const handleLog = async (certName: string) => {
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/downloads/log`, {
+            await fetch(`${API_BASE_URL}/api/downloads/log`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { useAuth } from "@/app/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/utils/apiConfig";
 
 interface UserStats {
     total: number;
@@ -74,10 +75,10 @@ export default function AdminDashboard() {
         setLoading(true);
         try {
             const [statsRes, activitiesRes, certsRes, resumesRes] = await Promise.all([
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/admin/stats`, { headers: { Authorization: `Bearer ${token}` } }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/admin/activities`, { headers: { Authorization: `Bearer ${token}` } }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/certificates`),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/resumes`)
+                fetch(`${API_BASE_URL}/api/admin/stats`, { headers: { Authorization: `Bearer ${token}` } }),
+                fetch(`${API_BASE_URL}/api/admin/activities`, { headers: { Authorization: `Bearer ${token}` } }),
+                fetch(`${API_BASE_URL}/api/certificates`),
+                fetch(`${API_BASE_URL}/api/resumes`)
             ]);
 
             const statsData = await statsRes.json();
@@ -99,7 +100,7 @@ export default function AdminDashboard() {
     const handleAddCert = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/admin/certificates`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/certificates`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -119,7 +120,7 @@ export default function AdminDashboard() {
     const handleRemoveCert = async (id: number) => {
         if (!confirm("Are you sure?")) return;
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/admin/certificates/${id}`, {
+            await fetch(`${API_BASE_URL}/api/admin/certificates/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -132,7 +133,7 @@ export default function AdminDashboard() {
     const handleAddResume = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/admin/resumes`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/resumes`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -152,7 +153,7 @@ export default function AdminDashboard() {
     const handleRemoveResume = async (id: number) => {
         if (!confirm("Are you sure?")) return;
         try {
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/admin/resumes/${id}`, {
+            await fetch(`${API_BASE_URL}/api/admin/resumes/${id}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` }
             });

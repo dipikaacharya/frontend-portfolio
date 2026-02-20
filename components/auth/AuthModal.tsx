@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Modal } from "../ui/Modal";
 import { useAuth } from "@/app/context/AuthContext";
+import { API_BASE_URL } from "@/utils/apiConfig";
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -39,7 +40,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         const payload = isLogin ? { email, password } : { name, email, password };
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+            const response = await fetch(`${API_BASE_URL}/api/auth/${isLogin ? 'login' : 'signup'}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
